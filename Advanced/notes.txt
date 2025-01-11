@@ -1,0 +1,162 @@
+// to start the redis in  docker contaier use
+//https://redis.io/docs/latest/operate/oss_and_stack/install/install-stack/docker/
+docker run -d --name redis-stack -p 6379:6379 -p 8001:8001 redis/redis-stack:latest
+
+
+
+then do docker ps
+
+docker exec -it a4d705dc62c9 bash
+
+//a4d705dc62c9-> its CONTAINER ID 
+
+redis cli
+
+ping u get output PONG
+
+
+
+************************* string ******************************
+
+
+####################### get,set,mget,mset ##############################
+
+set user:1 "kushal"
+
+get user:1
+
+set user:1 "kushal-updated" nx 
+nx is used only if the value doesnt exist already if it already exists then no change occur
+output ma user:1 will have kushal only
+
+set user:1 "kushal-updated" xx 
+xx is used only if the value exists already if it doesnt exist then no change occur
+output ma user:1 will have kushal-updated 
+
+but if we set the xx value to new assigned value then it will not change
+set user:2 "bansal" xx
+output no change
+
+
+
+multiple get 
+mget user:1 user:2
+
+multiple set also possible 
+mset user:1 kushal user:2 bansal
+
+
+####################### increment , decrement ##############################
+set count 1
+
+=> can be used to find the record of visitors in the website
+
+incr count 
+
+ incrby count 33
+
+decr count
+
+decrby count 4
+
+####################### expire ##############################
+
+
+expire name_of_key time_in_sec
+
+expire message:1 15
+
+
+************************* Redis Lists ******************************
+basically used to create stack and queues
+
+####################### Lpush,Rpush ##############################
+ main operations => Lpush , Lpop , Lrange, Rpush , Rpop , Rrange
+
+ Lpush name_of_list value1 value2 value3
+ Lpush list 1
+ Lpop list
+ also can push more data
+ Lpush list 1 2 3
+ Lpop list
+
+ similar with Rpush
+
+ length of list
+ Llen list
+
+
+ ####################### Blocking commands ##############################
+ ####################### BLpop ,BRpop ##############################
+ blpop message:1 20
+
+
+if there is message:1 it will immediately return else it will wait for 20 seconds till it gets the message and if it doesnt it will retrun nill
+
+as sooon as value is entered then the lpop commands runs
+
+similar with brpop also
+
+to read all  the messages we can use lrange
+
+lrange list 0 -1
+=> starts from 0 and prints all the data 
+
+lrange list 0 1
+=> starts from 0 and prints only 2 data list[0] and list[1]
+
+************************* delete commands ******************************
+
+del name_of_list
+
+can delete folder but can delete file in cli structure
+
+keys user:*
+will show all the keys that starts with the user
+
+
+
+************************* Sets ******************************
+######################## Sadd , Smembers ##############################
+sadd ip 1
+sadd ip 2
+sadd ip 3
+sadd ip 3
+sadd ip 4
+sadd ip 4
+
+set will only add 1 2 3 4
+i.e ip-> 1 2 3 4
+
+Smembers ip used to see all ip present in the set
+Smembers ip
+
+sismember ip 1 to check if 1 exists in the set or not
+sismember ip 10
+
+************************* Hashes ******************************
+
+hset bike:1 id 1 company hero model honda year 2023
+
+it sets bike 1 as 
+{
+    id:1,
+    company:"hero",
+    model:"honda",
+    year:2023
+}
+
+can get more info from docs
+
+******************** Soted Sets ******************************
+
+stores on the sorted format uses priority queue
+
+zadd score 100 kushal 200 bnsl 40 a 50 b 44 c 66 g
+
+sets are default unsorted and use sadd and sorted is jst sorted and use zadd
+
+
+can find a particilar or reverse or in a range or anything
+
+******************** Redis Streams ******************************
